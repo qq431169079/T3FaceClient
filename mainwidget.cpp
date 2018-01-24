@@ -13,12 +13,12 @@
 
 #include "mainwidget.h"
 #include "camerasource.h"
-#include "videofilesource.h"
 #include "glhelper.h"
 #include "arcfaceengine.h"
 #include "asvloffscreen.h"
 #include "t3_log.h"
 #include "t3_library.h"
+
 
 
 MainWidget::MainWidget(QWidget *parent)
@@ -32,6 +32,7 @@ MainWidget::MainWidget(QWidget *parent)
     _socket = new QTcpSocket(this);
     serial = SerialPort::getSerialPort();
     _encoder = new Encoder(this);
+    _network = new T3_Face_Network();
 
 
     openCamera();
@@ -572,7 +573,9 @@ void MainWidget::sendFrameData()
      stream_.device()->seek(0);
      stream_ << (quint32) block_.size();
      _socket->write(block_);
+     _network->sendDataByUDP(frameData_.data(),frameData_.size());
      }
+
 
 }
 

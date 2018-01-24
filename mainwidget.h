@@ -16,6 +16,7 @@
 #include "encoder.h"
 #include "serialport.h"
 #include "t3_library.h"
+#include "t3_face_network.h"
 
 #define kWidth 0;
 #define kHeight 0;
@@ -91,6 +92,8 @@ private:
     //parameterControl
     bool _openSound = true;
     bool _record = true;
+
+    T3_Face_Network *_network;
 
     QSqlDatabase _database;
     Encoder * _encoder;

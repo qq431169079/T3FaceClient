@@ -3,7 +3,6 @@ HEADERS       = \
                 glhelper.h \
     camerasource.h \
     mainwidget.h \
-    videofilesource.h \
     framesource.h \
     arcfaceengine.h \
     key.h \
@@ -12,11 +11,11 @@ HEADERS       = \
     netsdk.h \
     encoder.h \
     t3_log.h \
-    saveimagethread.h \
     t3_library.h \
     serialport.h \
     arcsoft_fsdk_gender_estimation.h \
-    arcsoft_fsdk_age_estimation.h
+    arcsoft_fsdk_age_estimation.h \
+    t3_face_network.h
 
 SOURCES       = \
                 main.cpp \
@@ -24,11 +23,10 @@ SOURCES       = \
                 glhelper.cpp \
     camerasource.cpp \
     mainwidget.cpp \
-    videofilesource.cpp \
     arcfaceengine.cpp \
     encoder.cpp \
-    saveimagethread.cpp \
-    serialport.cpp
+    serialport.cpp \
+    t3_face_network.cpp
 
 QT           += widgets  multimedia sql network serialport
 win32:LIBS       +=  -L../FRDemo -llibarcsoft_fsdk_face_tracking -llibarcsoft_fsdk_face_recognition
