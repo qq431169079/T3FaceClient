@@ -37,7 +37,7 @@ SOURCES       = \
 QT           += widgets  multimedia sql network serialport
 win32:LIBS       +=  -L../FRDemo -llibarcsoft_fsdk_face_tracking -llibarcsoft_fsdk_face_recognition
 unix:LIBS        +=  -L../FRDemo -larcsoft_fsdk_face_tracking -larcsoft_fsdk_face_recognition -lxmnetsdk
-unix:LIBS        +=  -L../FRDemo -larcsoft_fsdk_gender_estimation -larcsoft_fsdk_age_estimation
+unix:LIBS        +=  -L../FRDemo -larcsoft_fsdk_gender_estimation -larcsoft_fsdk_age_estimation -lmsc
 
 
 
