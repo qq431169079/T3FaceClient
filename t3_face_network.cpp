@@ -17,7 +17,7 @@ T3_Face_Network::T3_Face_Network()
 int T3_Face_Network::sendDataByUDP(char* data,
                                    int dataSize)
 {
-    return _udpSocket->writeDatagram(data,dataSize,QHostAddress::LocalHost,8888);
+    return _udpSocket->writeDatagram(data,dataSize,QHostAddress("192.168.0.192"),8888);
 
 }
 
