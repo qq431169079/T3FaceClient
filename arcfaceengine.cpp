@@ -20,7 +20,6 @@ ArcFaceEngine::ArcFaceEngine(QObject *parent)
      bReady = false;
      mThreshold = 0.55f;
      mFaceNum = 0;
-     serialPort = SerialPort::getSerialPort ();
      for(int k=0;k<MAX_FT_FACE;k++){
          mFaceID[k] = -1;
          _femealNum[k] = 0;
@@ -43,6 +42,7 @@ ArcFaceEngine::ArcFaceEngine(QObject *parent)
      hFREngine = nullptr;
      hFGEngine = nullptr;
      hFAEngine = nullptr;
+     _tts = new T3_Face_TTS();
 
 
      int ret = AFT_FSDK_InitialFaceEngine((MPChar)APPID, (MPChar)FT_SDKKEY, mFTWorkMem, ft_workmem_size, &hFTEngine, AFT_FSDK_OPF_0_HIGHER_EXT, 16, MAX_FT_FACE);
@@ -73,6 +73,7 @@ ArcFaceEngine::ArcFaceEngine(QObject *parent)
 
 
      bReady = true;
+
 }
 
 ArcFaceEngine::~ArcFaceEngine(){
@@ -369,7 +370,7 @@ bool ArcFaceEngine::processFrame(unsigned char *frameData,int frameWidth,int fra
                     T3LOG << bFaceChange;
                     if(_isNewFace)
                     {
-                        serialPort->greet (_genderSign);
+                        _tts->inputToText("",_genderSign,"");
                     }
                 }
             }
@@ -446,7 +447,8 @@ bool ArcFaceEngine::processFrame(unsigned char *frameData,int frameWidth,int fra
                            T3LOG << mRole[i];
                            T3LOG << fMaxScore;
                            mScore[i] = fMaxScore;
-			serialPort->sendMessage(mFaceName[i],mRole[i]);
+                           _tts->inputToText("",-1,mFaceName[i]);
+                        //serialPort->sendMessage(mFaceName[i],mRole[i]);
                        }
 
 

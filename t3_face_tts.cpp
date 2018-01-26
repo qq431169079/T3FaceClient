@@ -2,6 +2,10 @@
 
 T3_Face_TTS::T3_Face_TTS()
 {
+
+    _soundEffect = new QSoundEffect(this);
+    _player = new QMediaPlayer();
+    connect(_player,&QMediaPlayer::stateChanged,);
     initTTS();
 }
 
@@ -16,9 +20,11 @@ int T3_Face_TTS::initTTS()
             printf("MSPLogin failed, error code: %d.\n", ret);
             return 0 ;//登录失败，退出登录
         }
+    _sessionBeginParams = "engine_type = local,voice_name=xiaoyan, text_encoding = UTF8, tts_res_path = fo|res/tts/xiaoyan.jet;fo|res/tts/common.jet, sample_rate = 16000, speed = 50, volume = 50, pitch = 50, rdn = 2";
+    _filename           = "tts.wav"; //合成的语音文件名称
 }
 
-int T3_Face_TTS::textToSpeech(const char *src_text, const char *des_path, const char *params)
+int T3_Face_TTS::textToSpeech(const char *src_text)
 {
     int          ret          = -1;
     FILE*        fp           = NULL;
@@ -27,19 +33,19 @@ int T3_Face_TTS::textToSpeech(const char *src_text, const char *des_path, const 
     wave_pcm_hdr wav_hdr      = default_wav_hdr;
     int          synth_status = MSP_TTS_FLAG_STILL_HAVE_DATA;
 
-    if (NULL == src_text || NULL == des_path)
+    if (NULL == src_text || NULL == _filename)
     {
         printf("params is error!\n");
         return ret;
     }
-    fp = fopen(des_path, "wb");
+    fp = fopen(_filename, "wb");
     if (NULL == fp)
     {
-        printf("open %s error.\n", des_path);
+        printf("open %s error.\n", _filename);
         return ret;
     }
     /* 开始合成 */
-    sessionID = QTTSSessionBegin(params, &ret);
+    sessionID = QTTSSessionBegin(_sessionBeginParams, &ret);
     if (MSP_SUCCESS != ret)
     {
         printf("QTTSSessionBegin failed, error code: %d.\n", ret);
@@ -94,6 +100,56 @@ int T3_Face_TTS::textToSpeech(const char *src_text, const char *des_path, const 
     {
         printf("QTTSSessionEnd failed, error code: %d.\n",ret);
     }
-
+    _player->setMedia(QUrl::fromLocalFile("tts.wav"));
+    _player->setVolume(30);
+    _player->play();
     return ret;
+}
+
+int T3_Face_TTS::inputToText(QString role, int gender, QString name)
+{
+    QSqlQuery query_;
+    query_.prepare("select voice from T3FaceUserType where UserType = ?");
+    query_.bindValue(0,role);
+    query_.exec();
+    query_.next();
+    QString text = query_.value(0).toString();
+    text.replace("（姓名）",name);
+    switch (gender) {
+    case 0:
+        text.replace("（性别）","先生");
+        break;
+    case 1:
+        text.replace("（性别）","女士");
+        break;
+    default:
+        text.replace("（性别）","同学");
+        break;
+    }
+    T3LOG << text;
+    _textList.append(text);
+
+}
+int T3_Face_TTS::textListToSpeech()
+{
+    if(_textListIndex < _textList.size())
+    {
+        QByteArray temp_ = _textList[_textListIndex].toLatin1();
+        const char * text_= (const char * ) temp_.data();
+        textToSpeech(text_);
+        _textListIndex++;
+    }else
+    {
+        _textListIndex = 0 ;
+        _textList.clear();
+        T3LOG << "sound play end";
+    }
+}
+
+void T3_Face_TTS::playerStateChange(QMediaPlayer::State newState)
+{
+    if(QMediaPlayer::StoppedState == newState)
+    {
+        textListToSpeech();
+    }
 }

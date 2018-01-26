@@ -5,6 +5,12 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <errno.h>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QList>
+#include <QSoundEffect>
+#include <QMediaPlayer>
+#include <QUrl>
 #include "t3_log.h"
 extern "C"
 {
@@ -35,15 +41,34 @@ typedef struct _wave_pcm_hdr
     int				data_size;              // = 纯数据长度 : FileSize - 44
 } wave_pcm_hdr;
 
-class T3_Face_TTS
+class T3_Face_TTS : public QObject
 {
+    Q_OBJECT
 public:
     T3_Face_TTS();
-    int textToSpeech(const char* src_text, const char* des_path, const char* params);
+    /**
+     * @brief inputToText 根据不同的输入合成相应的文字
+     * @param role　用户的类型　没有则用“”来表示
+     * @param gender　用户的性别　男：０，女：１，无法识别：－１
+     * @param name　用户的名字　没有则使用“”表示
+     * @return
+     */
+    int inputToText(QString role,int gender,QString name);
+
 
 private:
     int initTTS();
+    int textToSpeech(const char* src_text);
+    int textListToSpeech();
     int ret = MSP_SUCCESS;
+    const char* _sessionBeginParams;
+    const char* _filename;
+    bool _isPlayVoice = false;
+    QList<QString> _textList;
+    int _textListIndex = 0;
+    QSoundEffect *_soundEffect;
+    QMediaPlayer *_player;
+
 
     /* 默认wav音频头部数据 */
     wave_pcm_hdr default_wav_hdr =
@@ -62,6 +87,10 @@ private:
         {'d', 'a', 't', 'a'},
         0
     };
+
+private:
+    void playerStateChange(QMediaPlayer::State newState);
+
 };
 
 #endif // T3_FACE_TTS_H

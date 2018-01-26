@@ -14,7 +14,6 @@
 
 #include "arcfaceengine.h"
 #include "encoder.h"
-#include "serialport.h"
 #include "t3_library.h"
 #include "t3_face_network.h"
 
@@ -152,7 +151,6 @@ private:
     QString _age;
     QString _updateTime;
     bool _netWorkState = false;
-    SerialPort *serial;
 
      bool showName = false;
 
