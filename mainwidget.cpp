@@ -530,7 +530,13 @@ void MainWidget::sendFrameData()
     stream_.setVersion(QDataStream::Qt_5_7);
 
      stream_ << (quint32) 0;
-     stream_ << (quint32)_sign;
+     _encoder->encodeFrame((uint8_t *)mFrameData);
+     //T3LOG << _encoder->_h265Data_.dataSize;
+     if(_encoder->_h265Data_.dataSize<100000&&_encoder->_h265Data_.dataSize > 0)
+     {
+     QByteArray frameData_((const char*) _encoder->_h265Data_.outData,_encoder->_h265Data_.dataSize);
+
+     stream_ << frameData_;
      stream_ << (quint32) mArcFaceEngine->mFaceNum;
 
      for(int i = 0;i < mArcFaceEngine->mFaceNum;i++)
@@ -563,17 +569,15 @@ void MainWidget::sendFrameData()
 
      }
 
-     _encoder->encodeFrame((uint8_t *)mFrameData);
-     //T3LOG << _encoder->_h265Data_.dataSize;
-     if(_encoder->_h265Data_.dataSize<100000&&_encoder->_h265Data_.dataSize > 0)
-     {
-     QByteArray frameData_((const char*) _encoder->_h265Data_.outData,_encoder->_h265Data_.dataSize);
 
-     stream_ << frameData_;
+      QString dataTimeString = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+     stream_ << dataTimeString;
      stream_.device()->seek(0);
      stream_ << (quint32) block_.size();
-     _socket->write(block_);
-     _network->sendDataByUDP(frameData_.data(),frameData_.size());
+     //_socket->write(block_);
+     T3LOG << "send the video data";
+     T3LOG << block_.size();
+     _network->sendDataByUDP(block_.data(),block_.size());
      }
 
 
@@ -582,13 +586,14 @@ void MainWidget::sendFrameData()
 
 void MainWidget::startSendVideo()
 {
+    T3LOG << "start play video";
      _encoder->initEncoder();
     _sendVideoTimer->start(20);
 
 }
 void MainWidget::stopTime()
 {
-
+     T3LOG << "stop play video";
     if(!_encoder->_isClose_)
     {
         _encoder->closeEncoder();

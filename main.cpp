@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 {
 
     QApplication app(argc, argv);
-    qInstallMessageHandler(outputMessage);
+    //qInstallMessageHandler(outputMessage);
 
         //打印日志到文件中
         qDebug("This is a debug message");
