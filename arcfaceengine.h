@@ -10,7 +10,7 @@
 #include "arcsoft_fsdk_face_recognition.h"
 #include "arcsoft_fsdk_face_tracking.h"
 #include "arcsoft_fsdk_age_estimation.h"
-#include "serialport.h"
+#include "t3_face_tts.h"
 #define MAX_FT_FACE (50)
 
 
@@ -106,10 +106,11 @@ private:
     bool _ageStart = false;
     bool _faceStart = false;
     int _frameNum = 0;
-    SerialPort *serialPort;
     bool _isNewFace = false;
     int _genderSign = -1;
     bool _faceNumChange = false;
+    T3_Face_TTS *_tts;
+
 
     bool bReady;
     int doFRFrameCount;

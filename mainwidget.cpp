@@ -30,14 +30,13 @@ MainWidget::MainWidget(QWidget *parent)
     _reConnectTimer = new QTimer(this);
     mArcFaceEngine = new ArcFaceEngine(this);
     _socket = new QTcpSocket(this);
-    serial = SerialPort::getSerialPort();
+
     _encoder = new Encoder(this);
     _network = new T3_Face_Network();
 
 
     openCamera();
     startReConnect();
-    serial->initSeialPort ();
     //监听相关信号
     connect(_reConnectTimer,&QTimer::timeout,this,&MainWidget::reconnect);
     connect(_socket,&QTcpSocket::connected,this,&MainWidget::stopReConnect);    
@@ -476,11 +475,6 @@ void MainWidget::readMessage()
             T3LOG  << mArcFaceEngine->mThreshold;
             _blockSize = 0;
             break;
-        case 6:
-            int index_;
-            stream_ >> index_;
-            serial->playSound(index_);
-             _blockSize = 0;
 
         default:
             break;
