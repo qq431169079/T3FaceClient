@@ -36,6 +36,7 @@ MainWidget::MainWidget(QWidget *parent)
 
     openCamera();
     startReConnect();
+    loadFaceDB();
     //监听相关信号
     connect(_reConnectTimer,&QTimer::timeout,this,&MainWidget::reconnect);
     connect(_socket,&QTcpSocket::connected,this,&MainWidget::stopReConnect);    
@@ -87,7 +88,6 @@ void MainWidget::stopReConnect()
     {
         T3LOG << "database not open";
     }
-    loadFaceDB();
 }
 void MainWidget::reconnect()
 {

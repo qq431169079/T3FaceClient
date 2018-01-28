@@ -20,7 +20,8 @@ HEADERS       = \
     msp_cmn.h \
     msp_errors.h \
     msp_types.h \
-    qtts.h
+    qtts.h \
+    t3_face_database.h
 
 SOURCES       = \
                 main.cpp \
@@ -32,7 +33,8 @@ SOURCES       = \
     encoder.cpp \
     serialport.cpp \
     t3_face_network.cpp \
-    t3_face_tts.cpp
+    t3_face_tts.cpp \
+    t3_face_database.cpp
 
 QT           += widgets  multimedia sql network serialport
 win32:LIBS       +=  -L../FRDemo -llibarcsoft_fsdk_face_tracking -llibarcsoft_fsdk_face_recognition
