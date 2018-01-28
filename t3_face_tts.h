@@ -88,7 +88,7 @@ private:
         0
     };
 
-private:
+private slots:
     void playerStateChange(QMediaPlayer::State newState);
 
 };

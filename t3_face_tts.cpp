@@ -5,7 +5,7 @@ T3_Face_TTS::T3_Face_TTS()
 
     _soundEffect = new QSoundEffect(this);
     _player = new QMediaPlayer();
-    connect(_player,&QMediaPlayer::stateChanged,);
+    connect(_player,&QMediaPlayer::stateChanged,this,&T3_Face_TTS::playerStateChange);
     initTTS();
 }
 
