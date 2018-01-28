@@ -38,7 +38,7 @@ QT           += widgets  multimedia sql network serialport
 win32:LIBS       +=  -L../FRDemo -llibarcsoft_fsdk_face_tracking -llibarcsoft_fsdk_face_recognition
 unix:LIBS        +=  -L../FRDemo -larcsoft_fsdk_face_tracking -larcsoft_fsdk_face_recognition -lxmnetsdk
 unix:LIBS        +=  -L../FRDemo -larcsoft_fsdk_gender_estimation -larcsoft_fsdk_age_estimation -lmsc
-
+unix|win32: LIBS += -lavcodec  -lavutil -lswscale
 
 
 
@@ -46,6 +46,6 @@ RESOURCES += \
     t3_face_logo.qrc
 RC_FILE += t3_face_logo.rc
 
+QMAKE_CXXFLAGS += -std=c++0x
 
 
-unix|win32: LIBS += -lavcodec  -lavutil -lswscale

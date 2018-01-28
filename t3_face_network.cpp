@@ -1,6 +1,6 @@
 #include "t3_face_network.h"
 
-T3_Face_Network::T3_Face_Network()
+T3_Face_Network::T3_Face_Network(QObject *parent)
 {
     _udpSocket = new QUdpSocket(this);
     _tcpSocket = new QTcpSocket(this);
@@ -12,7 +12,10 @@ T3_Face_Network::T3_Face_Network()
     connect(_tcpSocket,&QTcpSocket::disconnected,this,&T3_Face_Network::disposeDisconnectNetwork);
     connect(_tcpSocket,&QTcpSocket::readyRead,this,&T3_Face_Network::readNetworkData);
 }
+T3_Face_Network::~T3_Face_Network()
+{
 
+}
 
 int T3_Face_Network::sendDataByUDP(char* data,
                                    int dataSize)

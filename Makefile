@@ -14,7 +14,7 @@ CC            = gcc
 CXX           = g++
 DEFINES       = -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_MULTIMEDIA_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_SQL_LIB -DQT_SERIALPORT_LIB -DQT_CORE_LIB
 CFLAGS        = -m64 -pipe -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-CXXFLAGS      = -m64 -pipe -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
+CXXFLAGS      = -m64 -pipe -std=c++0x -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 INCPATH       = -I. -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtMultimedia -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtNetwork -isystem /usr/include/x86_64-linux-gnu/qt5/QtSql -isystem /usr/include/x86_64-linux-gnu/qt5/QtSerialPort -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64
 QMAKE         = /usr/lib/x86_64-linux-gnu/qt5/bin/qmake
 DEL_FILE      = rm -f
@@ -33,10 +33,10 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = FRDemo1.0.0
-DISTDIR = /home/t3hxp/FRDemo/.tmp/FRDemo1.0.0
+DISTDIR = /home/t3hxp/t3robot/T3FaceClient/FRDemo/.tmp/FRDemo1.0.0
 LINK          = g++
 LFLAGS        = -m64 -Wl,-O1
-LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -L../FRDemo -larcsoft_fsdk_face_tracking -larcsoft_fsdk_face_recognition -lxmnetsdk -lavcodec -lavutil -lswscale -larcsoft_fsdk_gender_estimation -larcsoft_fsdk_age_estimation -lQt5Widgets -lQt5Multimedia -lQt5Gui -lQt5Network -lQt5Sql -lQt5SerialPort -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -L../FRDemo -larcsoft_fsdk_face_tracking -larcsoft_fsdk_face_recognition -lxmnetsdk -larcsoft_fsdk_gender_estimation -larcsoft_fsdk_age_estimation -lmsc -lavcodec -lavutil -lswscale -lQt5Widgets -lQt5Multimedia -lQt5Gui -lQt5Network -lQt5Sql -lQt5SerialPort -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -53,34 +53,36 @@ SOURCES       = main.cpp \
 		glhelper.cpp \
 		camerasource.cpp \
 		mainwidget.cpp \
-		videofilesource.cpp \
 		arcfaceengine.cpp \
 		encoder.cpp \
-		saveimagethread.cpp \
-		serialport.cpp qrc_t3_face_logo.cpp \
+		serialport.cpp \
+		t3_face_network.cpp \
+		t3_face_tts.cpp qrc_t3_face_logo.cpp \
 		moc_window.cpp \
 		moc_camerasource.cpp \
 		moc_mainwidget.cpp \
-		moc_videofilesource.cpp \
 		moc_arcfaceengine.cpp \
-		moc_serialport.cpp
+		moc_serialport.cpp \
+		moc_t3_face_network.cpp \
+		moc_t3_face_tts.cpp
 OBJECTS       = main.o \
 		window.o \
 		glhelper.o \
 		camerasource.o \
 		mainwidget.o \
-		videofilesource.o \
 		arcfaceengine.o \
 		encoder.o \
-		saveimagethread.o \
 		serialport.o \
+		t3_face_network.o \
+		t3_face_tts.o \
 		qrc_t3_face_logo.o \
 		moc_window.o \
 		moc_camerasource.o \
 		moc_mainwidget.o \
-		moc_videofilesource.o \
 		moc_arcfaceengine.o \
-		moc_serialport.o
+		moc_serialport.o \
+		moc_t3_face_network.o \
+		moc_t3_face_tts.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -174,7 +176,6 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		glhelper.h \
 		camerasource.h \
 		mainwidget.h \
-		videofilesource.h \
 		framesource.h \
 		arcfaceengine.h \
 		key.h \
@@ -183,20 +184,25 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		netsdk.h \
 		encoder.h \
 		t3_log.h \
-		saveimagethread.h \
 		t3_library.h \
 		serialport.h \
 		arcsoft_fsdk_gender_estimation.h \
-		arcsoft_fsdk_age_estimation.h main.cpp \
+		arcsoft_fsdk_age_estimation.h \
+		t3_face_network.h \
+		t3_face_tts.h \
+		msp_cmn.h \
+		msp_errors.h \
+		msp_types.h \
+		qtts.h main.cpp \
 		window.cpp \
 		glhelper.cpp \
 		camerasource.cpp \
 		mainwidget.cpp \
-		videofilesource.cpp \
 		arcfaceengine.cpp \
 		encoder.cpp \
-		saveimagethread.cpp \
-		serialport.cpp
+		serialport.cpp \
+		t3_face_network.cpp \
+		t3_face_tts.cpp
 QMAKE_TARGET  = FRDemo
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = FRDemo
@@ -439,8 +445,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents t3_face_logo.qrc $(DISTDIR)/
-	$(COPY_FILE) --parents window.h glhelper.h camerasource.h mainwidget.h videofilesource.h framesource.h arcfaceengine.h key.h arcsoft_fsdk_face_recognition.h arcsoft_fsdk_face_tracking.h netsdk.h encoder.h t3_log.h saveimagethread.h t3_library.h serialport.h arcsoft_fsdk_gender_estimation.h arcsoft_fsdk_age_estimation.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp window.cpp glhelper.cpp camerasource.cpp mainwidget.cpp videofilesource.cpp arcfaceengine.cpp encoder.cpp saveimagethread.cpp serialport.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents window.h glhelper.h camerasource.h mainwidget.h framesource.h arcfaceengine.h key.h arcsoft_fsdk_face_recognition.h arcsoft_fsdk_face_tracking.h netsdk.h encoder.h t3_log.h t3_library.h serialport.h arcsoft_fsdk_gender_estimation.h arcsoft_fsdk_age_estimation.h t3_face_network.h t3_face_tts.h msp_cmn.h msp_errors.h msp_types.h qtts.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp window.cpp glhelper.cpp camerasource.cpp mainwidget.cpp arcfaceengine.cpp encoder.cpp serialport.cpp t3_face_network.cpp t3_face_tts.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -469,15 +475,15 @@ qrc_t3_face_logo.cpp: t3_face_logo.qrc \
 		bg/bg.jpg
 	/usr/lib/x86_64-linux-gnu/qt5/bin/rcc -name t3_face_logo t3_face_logo.qrc -o qrc_t3_face_logo.cpp
 
-compiler_moc_header_make_all: moc_window.cpp moc_camerasource.cpp moc_mainwidget.cpp moc_videofilesource.cpp moc_arcfaceengine.cpp moc_serialport.cpp
+compiler_moc_header_make_all: moc_window.cpp moc_camerasource.cpp moc_mainwidget.cpp moc_arcfaceengine.cpp moc_serialport.cpp moc_t3_face_network.cpp moc_t3_face_tts.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_window.cpp moc_camerasource.cpp moc_mainwidget.cpp moc_videofilesource.cpp moc_arcfaceengine.cpp moc_serialport.cpp
+	-$(DEL_FILE) moc_window.cpp moc_camerasource.cpp moc_mainwidget.cpp moc_arcfaceengine.cpp moc_serialport.cpp moc_t3_face_network.cpp moc_t3_face_tts.cpp
 moc_window.cpp: window.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/t3hxp/FRDemo -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include window.h -o moc_window.cpp
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/t3hxp/t3robot/T3FaceClient/FRDemo -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include window.h -o moc_window.cpp
 
 moc_camerasource.cpp: framesource.h \
 		camerasource.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/t3hxp/FRDemo -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include camerasource.h -o moc_camerasource.cpp
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/t3hxp/t3robot/T3FaceClient/FRDemo -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include camerasource.h -o moc_camerasource.cpp
 
 moc_mainwidget.cpp: arcfaceengine.h \
 		asvloffscreen.h \
@@ -485,29 +491,46 @@ moc_mainwidget.cpp: arcfaceengine.h \
 		arcsoft_fsdk_face_recognition.h \
 		arcsoft_fsdk_face_tracking.h \
 		arcsoft_fsdk_age_estimation.h \
-		serialport.h \
-		t3_library.h \
+		t3_face_tts.h \
+		t3_log.h \
+		msp_cmn.h \
+		msp_types.h \
+		msp_errors.h \
+		qtts.h \
 		encoder.h \
+		t3_library.h \
+		t3_face_network.h \
 		mainwidget.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/t3hxp/FRDemo -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include mainwidget.h -o moc_mainwidget.cpp
-
-moc_videofilesource.cpp: framesource.h \
-		videofilesource.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/t3hxp/FRDemo -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include videofilesource.h -o moc_videofilesource.cpp
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/t3hxp/t3robot/T3FaceClient/FRDemo -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include mainwidget.h -o moc_mainwidget.cpp
 
 moc_arcfaceengine.cpp: asvloffscreen.h \
 		amcomdef.h \
 		arcsoft_fsdk_face_recognition.h \
 		arcsoft_fsdk_face_tracking.h \
 		arcsoft_fsdk_age_estimation.h \
-		serialport.h \
-		t3_library.h \
+		t3_face_tts.h \
+		t3_log.h \
+		msp_cmn.h \
+		msp_types.h \
+		msp_errors.h \
+		qtts.h \
 		arcfaceengine.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/t3hxp/FRDemo -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include arcfaceengine.h -o moc_arcfaceengine.cpp
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/t3hxp/t3robot/T3FaceClient/FRDemo -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include arcfaceengine.h -o moc_arcfaceengine.cpp
 
 moc_serialport.cpp: t3_library.h \
 		serialport.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/t3hxp/FRDemo -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include serialport.h -o moc_serialport.cpp
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/t3hxp/t3robot/T3FaceClient/FRDemo -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include serialport.h -o moc_serialport.cpp
+
+moc_t3_face_network.cpp: t3_face_network.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/t3hxp/t3robot/T3FaceClient/FRDemo -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include t3_face_network.h -o moc_t3_face_network.cpp
+
+moc_t3_face_tts.cpp: t3_log.h \
+		msp_cmn.h \
+		msp_types.h \
+		msp_errors.h \
+		qtts.h \
+		t3_face_tts.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/t3hxp/t3robot/T3FaceClient/FRDemo -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtMultimedia -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtSql -I/usr/include/x86_64-linux-gnu/qt5/QtSerialPort -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include t3_face_tts.h -o moc_t3_face_tts.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -533,11 +556,16 @@ window.o: window.cpp mainwidget.h \
 		arcsoft_fsdk_face_recognition.h \
 		arcsoft_fsdk_face_tracking.h \
 		arcsoft_fsdk_age_estimation.h \
-		serialport.h \
-		t3_library.h \
+		t3_face_tts.h \
+		t3_log.h \
+		msp_cmn.h \
+		msp_types.h \
+		msp_errors.h \
+		qtts.h \
 		encoder.h \
-		window.h \
-		t3_log.h
+		t3_library.h \
+		t3_face_network.h \
+		window.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o window.o window.cpp
 
 glhelper.o: glhelper.cpp glhelper.h \
@@ -558,21 +586,19 @@ mainwidget.o: mainwidget.cpp mainwidget.h \
 		arcsoft_fsdk_face_recognition.h \
 		arcsoft_fsdk_face_tracking.h \
 		arcsoft_fsdk_age_estimation.h \
-		serialport.h \
-		t3_library.h \
+		t3_face_tts.h \
+		t3_log.h \
+		msp_cmn.h \
+		msp_types.h \
+		msp_errors.h \
+		qtts.h \
 		encoder.h \
+		t3_library.h \
+		t3_face_network.h \
 		camerasource.h \
 		framesource.h \
-		videofilesource.h \
-		glhelper.h \
-		t3_log.h
+		glhelper.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwidget.o mainwidget.cpp
-
-videofilesource.o: videofilesource.cpp videofilesource.h \
-		framesource.h \
-		asvloffscreen.h \
-		amcomdef.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o videofilesource.o videofilesource.cpp
 
 arcfaceengine.o: arcfaceengine.cpp arcfaceengine.h \
 		asvloffscreen.h \
@@ -580,24 +606,35 @@ arcfaceengine.o: arcfaceengine.cpp arcfaceengine.h \
 		arcsoft_fsdk_face_recognition.h \
 		arcsoft_fsdk_face_tracking.h \
 		arcsoft_fsdk_age_estimation.h \
-		serialport.h \
-		t3_library.h \
+		t3_face_tts.h \
+		t3_log.h \
+		msp_cmn.h \
+		msp_types.h \
+		msp_errors.h \
+		qtts.h \
 		arcsoft_fsdk_gender_estimation.h \
-		key.h \
-		t3_log.h
+		key.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o arcfaceengine.o arcfaceengine.cpp
 
 encoder.o: encoder.cpp encoder.h \
 		t3_log.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o encoder.o encoder.cpp
 
-saveimagethread.o: saveimagethread.cpp saveimagethread.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o saveimagethread.o saveimagethread.cpp
-
 serialport.o: serialport.cpp serialport.h \
 		t3_library.h \
 		t3_log.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o serialport.o serialport.cpp
+
+t3_face_network.o: t3_face_network.cpp t3_face_network.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o t3_face_network.o t3_face_network.cpp
+
+t3_face_tts.o: t3_face_tts.cpp t3_face_tts.h \
+		t3_log.h \
+		msp_cmn.h \
+		msp_types.h \
+		msp_errors.h \
+		qtts.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o t3_face_tts.o t3_face_tts.cpp
 
 qrc_t3_face_logo.o: qrc_t3_face_logo.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_t3_face_logo.o qrc_t3_face_logo.cpp
@@ -611,14 +648,17 @@ moc_camerasource.o: moc_camerasource.cpp
 moc_mainwidget.o: moc_mainwidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwidget.o moc_mainwidget.cpp
 
-moc_videofilesource.o: moc_videofilesource.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_videofilesource.o moc_videofilesource.cpp
-
 moc_arcfaceengine.o: moc_arcfaceengine.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_arcfaceengine.o moc_arcfaceengine.cpp
 
 moc_serialport.o: moc_serialport.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_serialport.o moc_serialport.cpp
+
+moc_t3_face_network.o: moc_t3_face_network.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_t3_face_network.o moc_t3_face_network.cpp
+
+moc_t3_face_tts.o: moc_t3_face_tts.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_t3_face_tts.o moc_t3_face_tts.cpp
 
 ####### Install
 

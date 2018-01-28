@@ -26,13 +26,12 @@ MainWidget::MainWidget(QWidget *parent)
 {
 
     //相关初始化
+    mArcFaceEngine = new ArcFaceEngine(this);
+    _encoder = new Encoder(this);
     _sendVideoTimer = new QTimer(this);
     _reConnectTimer = new QTimer(this);
-    mArcFaceEngine = new ArcFaceEngine(this);
     _socket = new QTcpSocket(this);
-
-    _encoder = new Encoder(this);
-    _network = new T3_Face_Network();
+    _network = new T3_Face_Network(this);
 
 
     openCamera();
@@ -52,40 +51,17 @@ MainWidget::MainWidget(QWidget *parent)
 
 }
 
-
-MainWidget::~MainWidget()
+void MainWidget::openCamera()
 {
-    _encoder->closeEncoder();
-    T3LOG << "close";
-    if(mArcFaceEngine){
-        delete mArcFaceEngine;
-        mArcFaceEngine = nullptr;
+
+
+    if(mCameraSource == nullptr)
+    {
+
+        bFrameMirrored = true;
+        mCameraSource = new CameraSource(640, 480, ASVL_PAF_YUYV);
+        mCameraSource->Open(0,"");
     }
-
-    if(mWidgetData){
-        delete[] mWidgetData;
-        mWidgetData = nullptr;
-    }
-
-    if(mFrameData){
-        delete[] mFrameData;
-        mFrameData = nullptr;
-    }
-
-    if(mCameraSource != nullptr){
-        delete mCameraSource;
-        mCameraSource = nullptr;
-    }
-
-
-
-    if (mGLHelper != nullptr) {
-        mGLHelper->uninit();
-        delete mGLHelper;
-        mGLHelper = nullptr;
-	}
-
-
 }
 
 void MainWidget::startReConnect()
@@ -159,18 +135,7 @@ void MainWidget::loadFaceDB(){
 }
 
 
-void MainWidget::openCamera()
-{
 
-
-    if(mCameraSource == nullptr)
-    {
-
-        bFrameMirrored = true;
-        mCameraSource = new CameraSource(640, 480, ASVL_PAF_YUYV);
-        mCameraSource->Open(0,"");
-    }
-}
 
 
 QSize MainWidget::minimumSizeHint() const
@@ -444,7 +409,7 @@ void MainWidget::readMessage()
 {
 
     QDataStream stream_(_socket);
-    stream_.setVersion(QDataStream::Qt_5_7);
+    stream_.setVersion(QDataStream::Qt_5_5);
     if(0 == _blockSize)
     {
         stream_ >> _blockSize;
@@ -521,7 +486,7 @@ void MainWidget::sendFrameData()
     _sign = 1;
     QByteArray block_;
     QDataStream stream_(&block_,QIODevice::WriteOnly);
-    stream_.setVersion(QDataStream::Qt_5_7);
+    stream_.setVersion(QDataStream::Qt_5_5);
 
      stream_ << (quint32) 0;
      _encoder->encodeFrame((uint8_t *)mFrameData);
@@ -598,3 +563,37 @@ void MainWidget::stopTime()
 }
 
 
+MainWidget::~MainWidget()
+{
+    _encoder->closeEncoder();
+    T3LOG << "close";
+    if(mArcFaceEngine){
+        delete mArcFaceEngine;
+        mArcFaceEngine = nullptr;
+    }
+
+    if(mWidgetData){
+        delete[] mWidgetData;
+        mWidgetData = nullptr;
+    }
+
+    if(mFrameData){
+        delete[] mFrameData;
+        mFrameData = nullptr;
+    }
+
+    if(mCameraSource != nullptr){
+        delete mCameraSource;
+        mCameraSource = nullptr;
+    }
+
+
+
+    if (mGLHelper != nullptr) {
+        mGLHelper->uninit();
+        delete mGLHelper;
+        mGLHelper = nullptr;
+    }
+
+
+}

@@ -17,7 +17,8 @@ class T3_Face_Network : public QObject
 {
     Q_OBJECT
 public:
-    T3_Face_Network();
+    explicit  T3_Face_Network(QObject *parent = 0);
+    ~T3_Face_Network();
     /**
      * @brief 使用UDP方式传输数据
      * @param data :传输的数据首地址

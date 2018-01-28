@@ -7,6 +7,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QMutex>
+#include "t3_log.h"
 #define LOGFILEMAX 10000
 void outputMessage(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
@@ -50,14 +51,10 @@ void outputMessage(QtMsgType type, const QMessageLogContext &context, const QStr
 
 int main(int argc, char *argv[])
 {
-
     QApplication app(argc, argv);
+    // 打印日志到文件中
     //qInstallMessageHandler(outputMessage);
 
-        //打印日志到文件中
-        qDebug("This is a debug message");
-        qWarning("This is a warning message");
-        qCritical("This is a critical message");
 
 	Window window;
 	window.show();
