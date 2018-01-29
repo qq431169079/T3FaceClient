@@ -21,7 +21,7 @@ public:
     int featureSize;
     QString name;
     int id;
-    int role;
+    QString role;
     int num;
     QString dateTime;
     FaceInfo(){
@@ -36,13 +36,16 @@ class ArcFaceEngine : public QObject
 {
     Q_OBJECT
 public:
+    static ArcFaceEngine * getFaceEngine();
+
+
     bool _autoRegister = false;
     float mThreshold;
     bool _databaseReady_ = false;
     bool _isLoadFace = false;
 
 
-    explicit ArcFaceEngine(QObject *parent);
+
     virtual ~ArcFaceEngine();
     QMap<int,FaceInfo> mRegisterFaces;
     //QVector<FaceInfo> mRegisterFaces;
@@ -51,7 +54,7 @@ public:
     int loadDB();
     void addFace(int id,
                  QString name,
-                 int role,
+                 QString role,
                  QByteArray feature,
                  int num,
                  QString dateTime);
@@ -63,7 +66,7 @@ public:
     int mFaceOrient[MAX_FT_FACE];
     QString mFaceName[MAX_FT_FACE];
     float mScore[MAX_FT_FACE];
-    int mRole[MAX_FT_FACE];
+    QString mRole[MAX_FT_FACE];
     int mFaceID[MAX_FT_FACE];
     int mFaceState[MAX_FT_FACE];
     int mFramenum[MAX_FT_FACE];
@@ -81,8 +84,11 @@ public:
 
 signals:
     void newFace(int id ,QString name, QByteArray feature);
+    void log(int id,QString name);
 
 private:
+
+    ArcFaceEngine();
     void *hFTEngine;
     unsigned char *mFTWorkMem;
 

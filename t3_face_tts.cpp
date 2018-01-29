@@ -3,10 +3,15 @@
 T3_Face_TTS::T3_Face_TTS()
 {
 
-    _soundEffect = new QSoundEffect(this);
-    _player = new QMediaPlayer();
-    connect(_player,&QMediaPlayer::stateChanged,this,&T3_Face_TTS::playerStateChange);
+    _soundEffect = new QSoundEffect(this); 
+    connect(_soundEffect,&QSoundEffect::playingChanged,this,&T3_Face_TTS::playingChange);
     initTTS();
+}
+
+T3_Face_TTS *T3_Face_TTS::getTTS()
+{
+    static T3_Face_TTS tts_;
+    return &tts_;
 }
 
 int T3_Face_TTS::initTTS()
@@ -17,7 +22,7 @@ int T3_Face_TTS::initTTS()
     ret = MSPLogin(login_name, login_pwd, login_params); //第一个参数是用户名，第二个参数是密码，第三个参数是登录参数，用户名和密码可在http://www.xfyun.cn注册获取
         if (MSP_SUCCESS != ret)
         {
-            printf("MSPLogin failed, error code: %d.\n", ret);
+            T3LOG <<"MSPLogin failed, error code: %d.\n";
             return 0 ;//登录失败，退出登录
         }
     _sessionBeginParams = "engine_type = local,voice_name=xiaoyan, text_encoding = UTF8, tts_res_path = fo|res/tts/xiaoyan.jet;fo|res/tts/common.jet, sample_rate = 16000, speed = 50, volume = 50, pitch = 50, rdn = 2";
@@ -35,32 +40,32 @@ int T3_Face_TTS::textToSpeech(const char *src_text)
 
     if (NULL == src_text || NULL == _filename)
     {
-        printf("params is error!\n");
+        T3LOG << "params is error!\n";
         return ret;
     }
     fp = fopen(_filename, "wb");
     if (NULL == fp)
     {
-        printf("open %s error.\n", _filename);
+        T3LOG <<"open %s error.\n";
         return ret;
     }
     /* 开始合成 */
     sessionID = QTTSSessionBegin(_sessionBeginParams, &ret);
     if (MSP_SUCCESS != ret)
     {
-        printf("QTTSSessionBegin failed, error code: %d.\n", ret);
+        T3LOG <<"QTTSSessionBegin failed, error code: %d.\n";
         fclose(fp);
         return ret;
     }
     ret = QTTSTextPut(sessionID, src_text, (unsigned int)strlen(src_text), NULL);
     if (MSP_SUCCESS != ret)
     {
-        printf("QTTSTextPut failed, error code: %d.\n",ret);
+       T3LOG <<"QTTSTextPut failed, error code: %d.\n";
         QTTSSessionEnd(sessionID, "TextPutError");
         fclose(fp);
         return ret;
     }
-    printf("正在合成 ...\n");
+    T3LOG << "正在合成 ...\n";
     fwrite(&wav_hdr, sizeof(wav_hdr) ,1, fp); //添加wav音频头，使用采样率为16000
     while (1)
     {
@@ -76,10 +81,9 @@ int T3_Face_TTS::textToSpeech(const char *src_text)
         if (MSP_TTS_FLAG_DATA_END == synth_status)
             break;
     }
-    printf("\n");
     if (MSP_SUCCESS != ret)
     {
-        printf("QTTSAudioGet failed, error code: %d.\n",ret);
+       T3LOG << "QTTSAudioGet failed, error code: %d.\n" << ret;
         QTTSSessionEnd(sessionID, "AudioGetError");
         fclose(fp);
         return ret;
@@ -98,16 +102,18 @@ int T3_Face_TTS::textToSpeech(const char *src_text)
     ret = QTTSSessionEnd(sessionID, "Normal");
     if (MSP_SUCCESS != ret)
     {
-        printf("QTTSSessionEnd failed, error code: %d.\n",ret);
+        T3LOG <<"QTTSSessionEnd failed, error code: %d.\n";
     }
-    _player->setMedia(QUrl::fromLocalFile("tts.wav"));
-    _player->setVolume(30);
-    _player->play();
+    T3LOG << "合成完毕";
+    _soundEffect->setSource(QUrl::fromLocalFile("tts.wav"));
+    _soundEffect->setVolume(1);
+    _soundEffect->play();
     return ret;
 }
 
 int T3_Face_TTS::inputToText(QString role, int gender, QString name)
 {
+    T3LOG << role << gender << name;
     QSqlQuery query_;
     query_.prepare("select voice from T3FaceUserType where UserType = ?");
     query_.bindValue(0,role);
@@ -128,14 +134,24 @@ int T3_Face_TTS::inputToText(QString role, int gender, QString name)
     }
     T3LOG << text;
     _textList.append(text);
+    if(!_isPlayVoice)
+    {
+        textListToSpeech();
+    }
+
 
 }
 int T3_Face_TTS::textListToSpeech()
 {
+    T3LOG << _textListIndex;
+    T3LOG << _textList.size();
     if(_textListIndex < _textList.size())
     {
+        T3LOG << _textList[_textListIndex];
+        std::string str = _textList[_textListIndex].toStdString();
         QByteArray temp_ = _textList[_textListIndex].toLatin1();
-        const char * text_= (const char * ) temp_.data();
+        const char * text_= str.c_str();
+        //const char * text_ = "欢迎扈学鹏来到杉科机器人";
         textToSpeech(text_);
         _textListIndex++;
     }else
@@ -146,10 +162,18 @@ int T3_Face_TTS::textListToSpeech()
     }
 }
 
-void T3_Face_TTS::playerStateChange(QMediaPlayer::State newState)
+
+void T3_Face_TTS::playingChange()
 {
-    if(QMediaPlayer::StoppedState == newState)
+    if(!_isPlayVoice)
     {
+        T3LOG << "播放开始";
+        _isPlayVoice = true;
+    }else
+    {
+        T3LOG << "播放完毕";
+        _isPlayVoice = false;
         textListToSpeech();
     }
+
 }

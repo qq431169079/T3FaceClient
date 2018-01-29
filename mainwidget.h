@@ -16,6 +16,7 @@
 #include "encoder.h"
 #include "t3_library.h"
 #include "t3_face_network.h"
+#include "t3_face_database.h"
 
 #define kWidth 0;
 #define kHeight 0;
@@ -68,6 +69,7 @@ private slots:
     void reconnect();
     void stopReConnect();
     void deleteFaceInfoById(int id);
+    void log(int id,QString name);
 
 
 signals:
@@ -77,11 +79,10 @@ signals:
     void updateState(int id);
 private:
 
-    void loadFaceDB();
     void readDatabase();
     void getNewFaceInfo();
     void paramControle(quint8 sign);
-
+    T3_Face_Database *_database1;
 
     //grender
     int _maleNum = 0;
@@ -89,7 +90,6 @@ private:
     int _frameNum = 0;
     bool _sendSerialGreet = true;
     //parameterControl
-    bool _openSound = true;
     bool _record = true;
 
     T3_Face_Network *_network;

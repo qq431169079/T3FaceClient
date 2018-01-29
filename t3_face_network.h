@@ -17,7 +17,8 @@ class T3_Face_Network : public QObject
 {
     Q_OBJECT
 public:
-    explicit  T3_Face_Network(QObject *parent = 0);
+    static T3_Face_Network *getNetwork();
+
     ~T3_Face_Network();
     /**
      * @brief 使用UDP方式传输数据
@@ -35,6 +36,7 @@ public:
     int sendDataByTcp(QJsonObject jsonObject);
 
 private:
+    T3_Face_Network();
     QUdpSocket *_udpSocket;
     QTcpSocket *_tcpSocket;
     bool _netWorkState = false;

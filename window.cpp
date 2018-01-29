@@ -22,13 +22,40 @@ Window::Window()
     pal.setBrush(QPalette::Window,QBrush(bgImage.scaled(width_,height_,Qt::IgnoreAspectRatio,Qt::SmoothTransformation)));
     setPalette(pal);
     setWindowTitle(tr("T3_Face"));
+
+    //初始化相关单例
+    _faceEngine = ArcFaceEngine::getFaceEngine();
+    _database = T3_Face_Database::getDatabase();
+    _network = T3_Face_Network::getNetwork();
+    _tts = T3_Face_TTS::getTTS();
 }
 
 Window::~Window()
 {
-    if(mainWidget){
+    if(mainWidget)
+    {
         delete mainWidget;
         mainWidget = nullptr;
+    }
+    if(_faceEngine)
+    {
+        delete _faceEngine;
+        _faceEngine = nullptr;
+    }
+    if(_database)
+    {
+        delete _database;
+        _database = nullptr;
+    }
+    if(_network)
+    {
+        delete _network;
+        _network = nullptr;
+    }
+    if(_tts)
+    {
+        delete _tts;
+        _tts = nullptr;
     }
 
 }

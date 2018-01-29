@@ -26,18 +26,19 @@ MainWidget::MainWidget(QWidget *parent)
 {
 
     //相关初始化
-    mArcFaceEngine = new ArcFaceEngine(this);
+    mArcFaceEngine = ArcFaceEngine::getFaceEngine();
     _encoder = new Encoder(this);
     _sendVideoTimer = new QTimer(this);
     _reConnectTimer = new QTimer(this);
     _socket = new QTcpSocket(this);
-    _network = new T3_Face_Network(this);
+    _network = T3_Face_Network::getNetwork();
+    _database1 = T3_Face_Database::getDatabase();
 
 
     openCamera();
     startReConnect();
-    loadFaceDB();
     //监听相关信号
+    //connect(_network,&T3_Face_Network::connectedNetwork);
     connect(_reConnectTimer,&QTimer::timeout,this,&MainWidget::reconnect);
     connect(_socket,&QTcpSocket::connected,this,&MainWidget::stopReConnect);    
     connect(_socket,&QTcpSocket::disconnected,this,&MainWidget::startReConnect);
@@ -46,7 +47,7 @@ MainWidget::MainWidget(QWidget *parent)
     connect(this,&MainWidget::sendVideo,this,&MainWidget::startSendVideo);
     connect(this,&MainWidget::stopVideo,this,&MainWidget::stopTime);
     connect(_sendVideoTimer,&QTimer::timeout,this,&MainWidget::sendFrameData);
-
+    connect(mArcFaceEngine,&ArcFaceEngine::log,this,&MainWidget::log);
 
     setFixedSize(640, 480);
 
@@ -67,9 +68,6 @@ void MainWidget::openCamera()
 
 void MainWidget::startReConnect()
 {
-
-    _database.close();
-    _database.removeDatabase(kDatabaseEngine);
     _netWorkState = false;
     _reConnectTimer->start(4000);
 
@@ -79,59 +77,13 @@ void MainWidget::stopReConnect()
     mArcFaceEngine->mRegisterFaces.clear();
     _netWorkState = true;
     _reConnectTimer->stop();
-    _database = QSqlDatabase::addDatabase(kDatabaseEngine);
-    _database.setDatabaseName(kDatabaseName);
-    _database.setHostName(kServerURL);
-    _database.setUserName(kDatabaseUserName);
-    _database.setPassword(kDatabasePassword);
-    if(!_database.open())
-    {
-        T3LOG << "database not open";
-    }
+    _database1->loadFaceDatabase();
+    T3LOG << "network connected";
 }
 void MainWidget::reconnect()
 {
     _socket->abort();
     _socket->connectToHost(kServerURL,kServerPort);
-}
-void MainWidget::loadFaceDB(){
-
-
-    QSqlQuery query(_database);
-    query.exec("select * from T3Face where state > 0");
-    while (query.next())
-    {
-         int roleSign_ = 0;
-        int id_ = query.value(0).toInt();
-        QString name_ = query.value(1).toString();
-        QString role_ = query.value(2).toString();
-        if("领导1" == role_)
-        {
-            roleSign_ = 1;
-        }
-        if("领导2" == role_)
-        {
-            roleSign_ = 2;
-        }
-        if("访客" == role_)
-        {
-            roleSign_ = 3;
-        }
-        if("测试人员" == role_)
-        {
-            roleSign_ = 4;
-        }
-
-
-        QByteArray feature_ = query.value(4).toByteArray();
-        int num_ = query.value(6).toInt();
-        QString dateTime_ = query.value(7).toString();
-        mArcFaceEngine->addFace(id_,name_,roleSign_,feature_,num_,dateTime_);
-        mArcFaceEngine->mUniqueIncID = id_ ;
-        mArcFaceEngine->_isLoadFace = true;
-        T3LOG << id_ ;
-        T3LOG << name_ ;
-    }
 }
 
 
@@ -329,14 +281,8 @@ void MainWidget::paintGL()
                             if(dateTime.value(mArcFaceEngine->mFaceID[i]).addSecs(kInterval) <= QDateTime::currentDateTime())
                             {
 
-                                if(_openSound)
-                                {
-                                    T3LOG << "sound";
 
-                                    // serial->sendMessage(mArcFaceEngine->mFaceName[i],mArcFaceEngine->mRole[i]);
-                                }
-
-                                if(_netWorkState)
+                                if(_netWorkState&&false)
                                 {
 
                                     QImage faceimage(mWidgetData,640,480, QImage::Format_RGB32);
@@ -352,7 +298,7 @@ void MainWidget::paintGL()
                                         memcpy(faceData.data(),mWidgetData,640*480*4);
                                         query_.bindValue(0,mArcFaceEngine->mFaceID[i]);
                                         query_.bindValue(1,mArcFaceEngine->mFaceName[i]);
-                                        query_.bindValue(2,faceData,QSql::Binary);
+                                        query_.bindValue(2,"");
                                         query_.bindValue(3,dataTimeString);
                                         bool succ = query_.exec();
                                         T3LOG << succ;
@@ -436,7 +382,6 @@ void MainWidget::readMessage()
             stream_ >> mArcFaceEngine->mThreshold;
             stream_ >> mArcFaceEngine->_autoRegister;
             stream_ >> _record;
-            stream_ >> _openSound;
             T3LOG  << mArcFaceEngine->mThreshold;
             _blockSize = 0;
             break;
@@ -474,7 +419,7 @@ void MainWidget::getNewFaceInfo()
         T3LOG << id ;
         T3LOG << name_ ;
     }*/
-    loadFaceDB();
+    _database1->loadFaceDatabase();
 
     T3LOG << "newFace";
 
@@ -534,8 +479,6 @@ void MainWidget::sendFrameData()
      stream_.device()->seek(0);
      stream_ << (quint32) block_.size();
      //_socket->write(block_);
-     T3LOG << "send the video data";
-     T3LOG << block_.size();
      _network->sendDataByUDP(block_.data(),block_.size());
      }
 
@@ -593,6 +536,35 @@ MainWidget::~MainWidget()
         mGLHelper->uninit();
         delete mGLHelper;
         mGLHelper = nullptr;
+    }
+
+
+}
+
+
+void MainWidget::log(int id,
+                     QString name)
+{
+    QString dateTime_ = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+    QSqlQuery query_;
+    query_.prepare("insert into T3FaceRecord values(NULL,?,?,?,?)");
+    query_.bindValue(0,id);
+    query_.bindValue(1,name);
+    query_.bindValue(2,"");
+    query_.bindValue(3,dateTime_);
+    if(_netWorkState)
+    {
+        _sign = 2;
+        QByteArray block_;
+        QDataStream stream_(&block_,QIODevice::WriteOnly);
+        stream_.setVersion(QDataStream::Qt_5_5);
+        stream_ <<(quint32) 0;
+        stream_ << _sign;
+        stream_ << id;
+        stream_.device()->seek(0);
+        stream_ << (quint32) block_.size();
+        T3LOG << "send the log" << id;
+        _socket->write(block_);
     }
 
 

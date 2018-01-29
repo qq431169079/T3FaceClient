@@ -13,7 +13,7 @@
 #include "t3_log.h"
 
 
-ArcFaceEngine::ArcFaceEngine(QObject *parent)
+ArcFaceEngine::ArcFaceEngine()
 {
 
      doFRFrameCount = 0;
@@ -42,7 +42,7 @@ ArcFaceEngine::ArcFaceEngine(QObject *parent)
      hFREngine = nullptr;
      hFGEngine = nullptr;
      hFAEngine = nullptr;
-     _tts = new T3_Face_TTS();
+     _tts = T3_Face_TTS::getTTS();
 
 
      int ret = AFT_FSDK_InitialFaceEngine((MPChar)APPID, (MPChar)FT_SDKKEY, mFTWorkMem, ft_workmem_size, &hFTEngine, AFT_FSDK_OPF_0_HIGHER_EXT, 16, MAX_FT_FACE);
@@ -74,6 +74,12 @@ ArcFaceEngine::ArcFaceEngine(QObject *parent)
 
      bReady = true;
 
+}
+
+ArcFaceEngine * ArcFaceEngine::getFaceEngine()
+{
+    static ArcFaceEngine faceEngine;
+    return &faceEngine;
 }
 
 ArcFaceEngine::~ArcFaceEngine(){
@@ -447,8 +453,9 @@ bool ArcFaceEngine::processFrame(unsigned char *frameData,int frameWidth,int fra
                            T3LOG << mRole[i];
                            T3LOG << fMaxScore;
                            mScore[i] = fMaxScore;
-                           _tts->inputToText("",-1,mFaceName[i]);
+                           _tts->inputToText(mRole[i],-1,mFaceName[i]);
                         //serialPort->sendMessage(mFaceName[i],mRole[i]);
+                           emit log(mFaceID[i],mFaceName[i]);
                        }
 
 
@@ -520,7 +527,7 @@ int ArcFaceEngine::ExtractFRFeature(unsigned char *frameData,int frameWidth,int 
 
 void ArcFaceEngine::addFace(int id,
                             QString name,
-                            int role,
+                            QString role,
                             QByteArray feature,
                             int num,
                             QString dateTime)

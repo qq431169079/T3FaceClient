@@ -9,7 +9,6 @@
 #include <QSqlQuery>
 #include <QList>
 #include <QSoundEffect>
-#include <QMediaPlayer>
 #include <QUrl>
 #include "t3_log.h"
 extern "C"
@@ -45,7 +44,7 @@ class T3_Face_TTS : public QObject
 {
     Q_OBJECT
 public:
-    T3_Face_TTS();
+    static T3_Face_TTS *getTTS();
     /**
      * @brief inputToText 根据不同的输入合成相应的文字
      * @param role　用户的类型　没有则用“”来表示
@@ -57,6 +56,7 @@ public:
 
 
 private:
+    T3_Face_TTS();
     int initTTS();
     int textToSpeech(const char* src_text);
     int textListToSpeech();
@@ -67,7 +67,6 @@ private:
     QList<QString> _textList;
     int _textListIndex = 0;
     QSoundEffect *_soundEffect;
-    QMediaPlayer *_player;
 
 
     /* 默认wav音频头部数据 */
@@ -89,7 +88,7 @@ private:
     };
 
 private slots:
-    void playerStateChange(QMediaPlayer::State newState);
+    void playingChange();
 
 };
 

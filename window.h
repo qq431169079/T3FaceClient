@@ -2,6 +2,10 @@
 #define WINDOW_H
 
 #include <QWidget>
+#include "arcfaceengine.h"
+#include "t3_face_database.h"
+#include "t3_face_network.h"
+#include "t3_face_tts.h"
 
 /**
   ******************************************************************************
@@ -23,6 +27,10 @@ public:
     ~Window();
 private:
     MainWidget *mainWidget;
+    ArcFaceEngine *_faceEngine;
+    T3_Face_Database *_database;
+    T3_Face_Network *_network;
+    T3_Face_TTS *_tts;
 
 };
 
