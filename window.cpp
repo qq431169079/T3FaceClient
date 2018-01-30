@@ -13,7 +13,7 @@ Window::Window()
     int width_ = QApplication::desktop()->width();
     int height_ = QApplication::desktop()->height();
     mainWidget = new MainWidget(this);
-    mainWidget->setGeometry(kVideoPoint_X,kVideoPoint_Y,kVideoWidth,kVideoHeight);
+    mainWidget->setGeometry(200,kVideoPoint_Y,kVideoWidth,kVideoHeight);
     mainWidget->show();
     QImage bgImage;
     bgImage.load(kBackgroundImage);
