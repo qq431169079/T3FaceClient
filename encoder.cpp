@@ -150,7 +150,7 @@ int Encoder::encodeFrame(uint8_t *data)
         _h265Data_.dataSize = pkt.size;
 
         //av_free_packet(&pkt);
-       /* fwrite(pkt.data, 1, pkt.size, fp_out);*/
+       fwrite(pkt.data, 1, pkt.size, fp_out);
     }
 
 }

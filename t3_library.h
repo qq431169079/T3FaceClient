@@ -25,7 +25,7 @@
 
 //MainWindow
 
-#define kVideoPoint_X 20
+#define kVideoPoint_X 200
 #define kVideoPoint_Y 170
 #define kVideoWidth 480
 #define kVideoHeight 640
