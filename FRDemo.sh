@@ -1,4 +1,18 @@
 #!/bin/sh
+echo "000000" | sudo -S service sshd start
+
+#/etc/init.d/ssh start
+
+sudo service sshd start
+
+#echo "000000" | sudo -S service sshd start
+
+echo "000000" | sudo -S service  mysql start
+
+
+sudo service mysql start
+
+
 sleep 0.3s
 cvt 892 500 60
 sleep 0.3s

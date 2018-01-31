@@ -37,9 +37,9 @@ SOURCES       = \
     t3_face_database.cpp
 
 QT           += widgets  multimedia sql network serialport
-win32:LIBS       +=  -L../FRDemo -llibarcsoft_fsdk_face_tracking -llibarcsoft_fsdk_face_recognition
-unix:LIBS        +=  -L../FRDemo -larcsoft_fsdk_face_tracking -larcsoft_fsdk_face_recognition -lxmnetsdk
-unix:LIBS        +=  -L../FRDemo -larcsoft_fsdk_gender_estimation -larcsoft_fsdk_age_estimation -lmsc
+win32:LIBS       +=  -L../T3FaceClient -llibarcsoft_fsdk_face_tracking -llibarcsoft_fsdk_face_recognition
+unix:LIBS        +=  -L../T3FaceClient -larcsoft_fsdk_face_tracking -larcsoft_fsdk_face_recognition -lxmnetsdk
+unix:LIBS        +=  -L../T3FaceClient -larcsoft_fsdk_gender_estimation -larcsoft_fsdk_age_estimation -lmsc
 unix|win32: LIBS += -lavcodec  -lavutil -lswscale
 
 
