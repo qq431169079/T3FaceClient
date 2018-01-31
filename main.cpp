@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     // 打印日志到文件中
-    //qInstallMessageHandler(outputMessage);
+    qInstallMessageHandler(outputMessage);
 
 
 	Window window;
