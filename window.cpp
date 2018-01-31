@@ -4,6 +4,7 @@
 #include "window.h"
 #include "t3_log.h"
 #include "t3_library.h"
+#include <QCursor>
 
 
 Window::Window()
@@ -12,8 +13,10 @@ Window::Window()
     this->showFullScreen();
     int width_ = QApplication::desktop()->width();
     int height_ = QApplication::desktop()->height();
+    this->setCursor(Qt::BlankCursor);
     mainWidget = new MainWidget(this);
-    mainWidget->setGeometry(kVideoPoint_X,kVideoPoint_Y,kVideoWidth,kVideoHeight);
+    //mainWidget->setGeometry(200,kVideoPoint_Y,kVideoWidth,kVideoHeight);
+    //mainWidget->move(20,kVideoPoint_Y);
     mainWidget->show();
     QImage bgImage;
     bgImage.load(kBackgroundImage);
