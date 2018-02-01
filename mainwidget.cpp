@@ -83,7 +83,7 @@ void MainWidget::stopReConnect()
 void MainWidget::reconnect()
 {
     _socket->abort();
-    _socket->connectToHost("192.168.0.192",kServerPort);
+    _socket->connectToHost("192.168.0.136",kServerPort);
 }
 
 
