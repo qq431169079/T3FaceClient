@@ -59,9 +59,10 @@ int Encoder::initEncoder()
         printf("Could not allocate raw picture buffer\n");
         return -1;
     }
-
-        //Output bitstream
-        fp_out = fopen("ds.h264", "wb");
+    QString dataTimeString = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+    fileName_ = "/home/t001/video/"+dataTimeString+".h264";
+    //Output bitstream
+        fp_out = fopen(fileName_, "wb");
         if (!fp_out) {
             printf("Could not open ");
             return -1;

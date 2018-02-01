@@ -115,6 +115,10 @@ int T3_Face_TTS::inputToText(QString role, int gender, QString name)
 {
     T3LOG << role << gender << name;
     QSqlQuery query_;
+    if("" == role)
+    {
+        role = "未注册";
+    }
     query_.prepare("select voice from T3FaceUserType where UserType = ?");
     query_.bindValue(0,role);
     query_.exec();
