@@ -1,5 +1,6 @@
 #include "encoder.h"
 #include "t3_log.h"
+#include <QDateTime>
 
 Encoder::Encoder(QObject *parent)
 {
@@ -250,11 +251,13 @@ int Encoder::yuyvToYuv( uint8_t * temp_buffer)
 void Encoder::startRecordVideo()
 {
     QString dataTimeString = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
-        fileName_ = "/home/t001/video/"+dataTimeString+".h264";
+    QString fileName_ = "/home/t001/video/"+dataTimeString+".h264";
+    std::string str = fileName_.toStdString();
+    const char * fileNa_= str.c_str();
         //Output bitstream
-            fp_out = fopen(fileName_, "wb");
+            fp_out = fopen(fileNa_, "wb");
             if (!fp_out) {
                 printf("Could not open ");
-                return -1;
+
             }
 }

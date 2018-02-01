@@ -12,7 +12,6 @@ HEADERS       = \
     encoder.h \
     t3_log.h \
     t3_library.h \
-    serialport.h \
     arcsoft_fsdk_gender_estimation.h \
     arcsoft_fsdk_age_estimation.h \
     t3_face_network.h \
@@ -31,12 +30,11 @@ SOURCES       = \
     mainwidget.cpp \
     arcfaceengine.cpp \
     encoder.cpp \
-    serialport.cpp \
     t3_face_network.cpp \
     t3_face_tts.cpp \
     t3_face_database.cpp
 
-QT           += widgets  multimedia sql network serialport
+QT           += widgets  multimedia sql network
 win32:LIBS       +=  -L../T3FaceClient -llibarcsoft_fsdk_face_tracking -llibarcsoft_fsdk_face_recognition
 unix:LIBS        +=  -L../T3FaceClient -larcsoft_fsdk_face_tracking -larcsoft_fsdk_face_recognition -lxmnetsdk
 unix:LIBS        +=  -L../T3FaceClient -larcsoft_fsdk_gender_estimation -larcsoft_fsdk_age_estimation -lmsc

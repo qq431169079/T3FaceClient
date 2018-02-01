@@ -154,7 +154,6 @@ int T3_Face_TTS::textListToSpeech()
     {
         T3LOG << _textList[_textListIndex];
         std::string str = _textList[_textListIndex].toStdString();
-        QByteArray temp_ = _textList[_textListIndex].toLatin1();
         const char * text_= str.c_str();
         //const char * text_ = "欢迎扈学鹏来到杉科机器人";
         textToSpeech(text_);
