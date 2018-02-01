@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <QString>
 #include <QObject>
+#include <QTimer>
 
 #define __STDC_CONSTANT_MACROS
 
@@ -41,8 +42,9 @@ struct H265Data
   int dataSize;
 };
 
-class Encoder
+class Encoder :public QObject
 {
+    Q_OBJECT
 public:
     Encoder(QObject *parent);
 
@@ -56,7 +58,7 @@ public:
 
 private:
 
-
+        QTimer *_recordVideoTimer;
         AVCodec *pCodec;
         AVCodecContext *pCodecCtx= NULL;
         int i, ret, got_output;
@@ -94,6 +96,8 @@ private:
         struct SwsContext *img_convert_ctx;
         uint8_t *temp_buffer;
         int frame_idx=0;
+private slots:
+        void startRecordVideo();
 
 
 };

@@ -17,6 +17,7 @@
 #include "t3_library.h"
 #include "t3_face_network.h"
 #include "t3_face_database.h"
+#include "t3_face_tts.h"
 
 #define kWidth 0;
 #define kHeight 0;
@@ -83,6 +84,7 @@ private:
     void getNewFaceInfo();
     void paramControle(quint8 sign);
     T3_Face_Database *_database1;
+    T3_Face_TTS *_tts;
 
     //grender
     int _maleNum = 0;

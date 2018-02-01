@@ -59,7 +59,10 @@ int Encoder::initEncoder()
         printf("Could not allocate raw picture buffer\n");
         return -1;
     }
-    QString dataTimeString = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+    _recordVideoTimer = new QTimer(this);
+    _recordVideoTimer->start(1000*60*10);
+    connect(_recordVideoTimer,&QTimer::timeout,this,&Encoder::startRecordVideo);
+   /* QString dataTimeString = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
     fileName_ = "/home/t001/video/"+dataTimeString+".h264";
     //Output bitstream
         fp_out = fopen(fileName_, "wb");
@@ -67,7 +70,7 @@ int Encoder::initEncoder()
             printf("Could not open ");
             return -1;
         }
-
+*/
         y_size = pCodecCtx->width * pCodecCtx->height;
 
 
@@ -242,4 +245,16 @@ int Encoder::yuyvToYuv( uint8_t * temp_buffer)
             sws_scale(img_convert_ctx, src_data, src_linesize, 0, in_h, dst_data, dst_linesize);
             //frame_idx++;
 
+}
+
+void Encoder::startRecordVideo()
+{
+    QString dataTimeString = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+        fileName_ = "/home/t001/video/"+dataTimeString+".h264";
+        //Output bitstream
+            fp_out = fopen(fileName_, "wb");
+            if (!fp_out) {
+                printf("Could not open ");
+                return -1;
+            }
 }

@@ -53,6 +53,7 @@ public:
      * @return
      */
     int inputToText(QString role,int gender,QString name);
+    int playLowPowerSound();
 
 
 private:

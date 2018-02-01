@@ -118,6 +118,7 @@ int T3_Face_TTS::inputToText(QString role, int gender, QString name)
     if("" == role)
     {
         role = "未注册";
+
     }
     query_.prepare("select voice from T3FaceUserType where UserType = ?");
     query_.bindValue(0,role);
@@ -166,7 +167,15 @@ int T3_Face_TTS::textListToSpeech()
     }
 }
 
-
+int T3_Face_TTS::playLowPowerSound()
+{
+    QString lowPowerWorningString = "电池电量低，机器人开始返航";
+    _textList.append(lowPowerWorningString);
+    if(!_isPlayVoice)
+    {
+        textListToSpeech();
+    }
+}
 void T3_Face_TTS::playingChange()
 {
     if(!_isPlayVoice)

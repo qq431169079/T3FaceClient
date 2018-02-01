@@ -33,6 +33,7 @@ MainWidget::MainWidget(QWidget *parent)
     _socket = new QTcpSocket(this);
     _network = T3_Face_Network::getNetwork();
     _database1 = T3_Face_Database::getDatabase();
+    _tts = T3_Face_TTS::getTTS();
 
 
     openCamera();
@@ -384,6 +385,8 @@ void MainWidget::readMessage()
             stream_ >> _record;
             T3LOG  << mArcFaceEngine->mThreshold;
             _blockSize = 0;
+        case 7:
+            _tts->playLowPowerSound();
             break;
 
         default:
