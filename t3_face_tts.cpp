@@ -1,10 +1,12 @@
 #include "t3_face_tts.h"
+#include <QDateTime>
+#include <QFile>
 
 T3_Face_TTS::T3_Face_TTS()
 {
+    _playTimer = new QTimer(this);
 
-    _soundEffect = new QSoundEffect(this); 
-    connect(_soundEffect,&QSoundEffect::playingChanged,this,&T3_Face_TTS::playingChange);
+    connect(_playTimer,&QTimer::timeout,this,&T3_Face_TTS::stopPlay);
     initTTS();
 }
 
@@ -26,11 +28,19 @@ int T3_Face_TTS::initTTS()
             return 0 ;//登录失败，退出登录
         }
     _sessionBeginParams = "engine_type = local,voice_name=xiaoyan, text_encoding = UTF8, tts_res_path = fo|res/tts/xiaoyan.jet;fo|res/tts/common.jet, sample_rate = 16000, speed = 50, volume = 50, pitch = 50, rdn = 2";
-    _filename           = "tts.wav"; //合成的语音文件名称
+
 }
 
 int T3_Face_TTS::textToSpeech(const char *src_text)
 {
+
+    //QString fileName = QString(index)+".wav";
+
+    index++;
+    fileName = "a"+QDateTime::currentDateTime().toString("hhmmss")+".wav";
+    std::string str = fileName.toStdString();
+    const char * text_= str.c_str();
+    _filename           = text_; //合成的语音文件名称
     int          ret          = -1;
     FILE*        fp           = NULL;
     const char*  sessionID    = NULL;
@@ -105,15 +115,24 @@ int T3_Face_TTS::textToSpeech(const char *src_text)
         T3LOG <<"QTTSSessionEnd failed, error code: %d.\n";
     }
     T3LOG << "合成完毕";
-    _soundEffect->setSource(QUrl::fromLocalFile("tts.wav"));
+    int playTime_ = wav_hdr.data_size/32000;
+    QSoundEffect *_soundEffect = new QSoundEffect();
+    _soundEffect->setSource(QUrl::fromLocalFile(_filename));
     _soundEffect->setVolume(1);
     _soundEffect->play();
+
+    _playTimer->start(playTime_*1000);
+    _isPlayVoice = true;
     return ret;
 }
 
 int T3_Face_TTS::inputToText(QString role, int gender, QString name)
 {
     T3LOG << role << gender << name;
+    if(role == "")
+    {
+        role = "未注册";
+    }
     QSqlQuery query_;
     query_.prepare("select voice from T3FaceUserType where UserType = ?");
     query_.bindValue(0,role);
@@ -133,7 +152,11 @@ int T3_Face_TTS::inputToText(QString role, int gender, QString name)
         break;
     }
     T3LOG << text;
+
+    if( -1 == _textList.indexOf(text))
     _textList.append(text);
+
+
     if(!_isPlayVoice)
     {
         textListToSpeech();
@@ -151,7 +174,6 @@ int T3_Face_TTS::textListToSpeech()
         std::string str = _textList[_textListIndex].toStdString();
         QByteArray temp_ = _textList[_textListIndex].toLatin1();
         const char * text_= str.c_str();
-        //const char * text_ = "欢迎扈学鹏来到杉科机器人";
         textToSpeech(text_);
         _textListIndex++;
     }else
@@ -176,4 +198,30 @@ void T3_Face_TTS::playingChange()
         textListToSpeech();
     }
 
+}
+
+void T3_Face_TTS::stopPlay()
+{
+    T3LOG << "stopPlay";
+    _playTimer->stop();
+    _isPlayVoice = false;
+
+    QFile file(fileName);
+    if(file.exists())
+    {
+        T3LOG << "removeFile";
+        file.remove();
+    }
+
+    textListToSpeech();
+}
+
+void T3_Face_TTS::playlowPower()
+{
+    QString lowPowerString = "电池电量低,机器人开始返航.";
+    _textList.append(lowPowerString);
+    if(!_isPlayVoice)
+    {
+        textListToSpeech();
+    }
 }

@@ -5,8 +5,8 @@
 
 #define kDatabaseName "T3Face"
 //#define kDatabaseName "face"
-#define kDatabaseUserName "T3"
-#define kDatabasePassword "T3"
+#define kDatabaseUserName "T3Face"
+#define kDatabasePassword "T3Face"
 #define kDatabaseEngine "QMYSQL"
 
 
@@ -17,6 +17,8 @@
 #define kServerURL "localhost"
 //#define kServerURL "192.168.50.106"
 #define kServerPort 6666
+//#define kURL "192.168.0.192"
+#define kURL "192.168.0.210"
 
 //FaceEngine
 

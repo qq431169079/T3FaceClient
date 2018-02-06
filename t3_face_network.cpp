@@ -1,4 +1,6 @@
 #include "t3_face_network.h"
+#include "t3_library.h"
+#include "t3_log.h"
 
 T3_Face_Network::T3_Face_Network()
 {
@@ -6,11 +8,13 @@ T3_Face_Network::T3_Face_Network()
     _tcpSocket = new QTcpSocket(this);
     _connectNetworkTimer = new QTimer(this);
 
+
     //startConnectNetWork();
     connect(_connectNetworkTimer,&QTimer::timeout,this,&T3_Face_Network::connectNetwork);
     connect(_tcpSocket,&QTcpSocket::connected,this,&T3_Face_Network::stopConnectNetWork);
     connect(_tcpSocket,&QTcpSocket::disconnected,this,&T3_Face_Network::disposeDisconnectNetwork);
     connect(_tcpSocket,&QTcpSocket::readyRead,this,&T3_Face_Network::readNetworkData);
+
 }
 
 T3_Face_Network *T3_Face_Network::getNetwork()
@@ -28,8 +32,9 @@ int T3_Face_Network::sendDataByUDP(char* data,
 {
 
 //    return _udpSocket->writeDatagram(data,dataSize,QHostAddress::LocalHost,8888);
+    T3LOG << "send th udp";
 
-    return _udpSocket->writeDatagram(data,dataSize,QHostAddress("192.168.0.136"),8888);
+    return _udpSocket->writeDatagram(data,dataSize,QHostAddress("192.168.0.210"),8888);
 
 
 }
@@ -92,3 +97,5 @@ void T3_Face_Network::connectNetwork()
     _tcpSocket->abort();
     _tcpSocket->connectToHost(kServerURL,kServerPort);
 }
+
+

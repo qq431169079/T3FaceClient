@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <QString>
 #include <QObject>
+#include <QTimer>
 
 #define __STDC_CONSTANT_MACROS
 
@@ -33,7 +34,8 @@ extern "C"
 //test different codec
 #define TEST_H264  1
 #define TEST_HEVC  0
-
+#include <QTimer>
+#include <QDateTime>
 
 struct H265Data
 {
@@ -41,9 +43,11 @@ struct H265Data
   int dataSize;
 };
 
-class Encoder
+class Encoder : public QObject
 {
+    Q_OBJECT
 public:
+
     Encoder(QObject *parent);
 
     H265Data _h265Data_;
@@ -55,8 +59,9 @@ public:
 
 
 private:
+        QTimer *_recordVideoTimer;
 
-
+        void startRecordVideo();
         AVCodec *pCodec;
         AVCodecContext *pCodecCtx= NULL;
         int i, ret, got_output;

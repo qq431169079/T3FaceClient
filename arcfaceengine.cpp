@@ -472,6 +472,7 @@ bool ArcFaceEngine::processFrame(unsigned char *frameData,int frameWidth,int fra
 
                         T3LOG << fMaxScore;
                        frameNum ++;
+                       if(3 == _faceIndex)
                         _isNewFace = true;
                         if(frameNum == 10){
                             frameNum = 0;

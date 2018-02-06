@@ -33,6 +33,8 @@ MainWidget::MainWidget(QWidget *parent)
     _socket = new QTcpSocket(this);
     _network = T3_Face_Network::getNetwork();
     _database1 = T3_Face_Database::getDatabase();
+    _heartBeatTimer = new QTimer();
+    _tts = T3_Face_TTS::getTTS();
 
 
     openCamera();
@@ -48,6 +50,7 @@ MainWidget::MainWidget(QWidget *parent)
     connect(this,&MainWidget::stopVideo,this,&MainWidget::stopTime);
     connect(_sendVideoTimer,&QTimer::timeout,this,&MainWidget::sendFrameData);
     connect(mArcFaceEngine,&ArcFaceEngine::log,this,&MainWidget::log);
+    connect(_heartBeatTimer,&QTimer::timeout,this,&MainWidget::startReConnect);
 
     setFixedSize(600, 450);
     move(20,170);
@@ -78,12 +81,13 @@ void MainWidget::stopReConnect()
     _netWorkState = true;
     _reConnectTimer->stop();
     _database1->loadFaceDatabase();
+    _heartBeatTimer->start(40000);
     T3LOG << "network connected";
 }
 void MainWidget::reconnect()
 {
     _socket->abort();
-    _socket->connectToHost("192.168.0.136",kServerPort);
+    _socket->connectToHost(kURL,kServerPort);
 }
 
 
@@ -353,13 +357,14 @@ void MainWidget::resizeGL(int width, int height)
 
 void MainWidget::readMessage()
 {
-
+    T3LOG << "get the message";
     QDataStream stream_(_socket);
     stream_.setVersion(QDataStream::Qt_5_5);
     if(0 == _blockSize)
     {
         stream_ >> _blockSize;
         stream_ >> _readSign;
+        T3LOG << _readSign;
         switch (_readSign) {
         case 1:
             getNewFaceInfo();
@@ -383,6 +388,17 @@ void MainWidget::readMessage()
             stream_ >> mArcFaceEngine->_autoRegister;
             stream_ >> _record;
             T3LOG  << mArcFaceEngine->mThreshold;
+            _blockSize = 0;
+            break;
+
+        case 8:
+            _tts->playlowPower();
+
+            _blockSize = 0;
+            break;
+
+        case 10:
+            getHeartBeat();
             _blockSize = 0;
             break;
 
@@ -479,6 +495,7 @@ void MainWidget::sendFrameData()
      stream_.device()->seek(0);
      stream_ << (quint32) block_.size();
      //_socket->write(block_);
+     T3LOG << block_.size();
      _network->sendDataByUDP(block_.data(),block_.size());
      }
 
@@ -569,3 +586,14 @@ void MainWidget::log(int id,
 
 
 }
+void MainWidget::getHeartBeat()
+{
+    _heartBeatTimer->stop();
+    _heartBeatTimer->start(40000);
+}
+
+void MainWidget::heartBeat()
+{
+
+}
+

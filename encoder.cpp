@@ -61,12 +61,11 @@ int Encoder::initEncoder()
     }
 
         //Output bitstream
-        fp_out = fopen("ds.h264", "wb");
-        if (!fp_out) {
-            printf("Could not open ");
-            return -1;
-        }
-
+       _recordVideoTimer = new QTimer();
+       _recordVideoTimer->start(1000*60*10);
+       connect(_recordVideoTimer,&QTimer::timeout,this,&Encoder::startRecordVideo);
+       T3LOG << "recoredVideo";
+       startRecordVideo();
         y_size = pCodecCtx->width * pCodecCtx->height;
 
 
@@ -112,6 +111,7 @@ int Encoder::initEncoder()
                 //img_convert_ctx = sws_getContext(src_w, src_h,src_pixfmt, dst_w, dst_h, dst_pixfmt,
                 //	rescale_method, NULL, NULL, NULL);
                 //-----------------------------
+                T3LOG << "initencoder";
 
 
 }
@@ -119,6 +119,7 @@ int Encoder::initEncoder()
 int Encoder::encodeFrame(uint8_t *data)
 
 {
+    T3LOG << "encoder the frame";
 
     av_init_packet(&pkt);
     pkt.data = NULL;    // packet data will be allocated by the encoder
@@ -241,4 +242,18 @@ int Encoder::yuyvToYuv( uint8_t * temp_buffer)
             sws_scale(img_convert_ctx, src_data, src_linesize, 0, in_h, dst_data, dst_linesize);
             //frame_idx++;
 
+}
+
+void Encoder::startRecordVideo()
+{
+    QString dataTimeString = QDateTime::currentDateTime().toString("yyyyMMddhhmmss");
+    QString fileName_ = dataTimeString+".h264";
+    std::string str = fileName_.toStdString();
+    const char * fileNa_= str.c_str();
+        //Output bitstream
+            fp_out = fopen(fileNa_, "wb");
+            if (!fp_out) {
+                printf("Could not open ");
+
+            }
 }

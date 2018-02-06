@@ -10,6 +10,7 @@
 #include <QList>
 #include <QSoundEffect>
 #include <QUrl>
+#include <QTimer>
 #include "t3_log.h"
 extern "C"
 {
@@ -53,7 +54,7 @@ public:
      * @return
      */
     int inputToText(QString role,int gender,QString name);
-
+    void playlowPower();
 
 private:
     T3_Face_TTS();
@@ -66,7 +67,9 @@ private:
     bool _isPlayVoice = false;
     QList<QString> _textList;
     int _textListIndex = 0;
-    QSoundEffect *_soundEffect;
+    int index = 0;
+    QTimer *_playTimer;
+    QString fileName;
 
 
     /* 默认wav音频头部数据 */
@@ -89,6 +92,7 @@ private:
 
 private slots:
     void playingChange();
+    void stopPlay();
 
 };
 

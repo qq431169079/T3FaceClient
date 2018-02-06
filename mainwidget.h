@@ -17,6 +17,7 @@
 #include "t3_library.h"
 #include "t3_face_network.h"
 #include "t3_face_database.h"
+#include "t3_face_tts.h"
 
 #define kWidth 0;
 #define kHeight 0;
@@ -70,6 +71,7 @@ private slots:
     void stopReConnect();
     void deleteFaceInfoById(int id);
     void log(int id,QString name);
+    void heartBeat();
 
 
 signals:
@@ -82,7 +84,10 @@ private:
     void readDatabase();
     void getNewFaceInfo();
     void paramControle(quint8 sign);
+
+    void getHeartBeat();
     T3_Face_Database *_database1;
+    T3_Face_TTS *_tts;
 
     //grender
     int _maleNum = 0;
@@ -93,7 +98,7 @@ private:
     bool _record = true;
 
     T3_Face_Network *_network;
-
+    QTimer *_heartBeatTimer;
     QSqlDatabase _database;
     Encoder * _encoder;
     GLHelper* mGLHelper = nullptr;
@@ -152,7 +157,7 @@ private:
     QString _updateTime;
     bool _netWorkState = false;
 
-     bool showName = false;
+    bool showName = false;
 
 
 };

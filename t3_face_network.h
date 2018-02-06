@@ -37,6 +37,7 @@ public:
 
 private:
     T3_Face_Network();
+
     QUdpSocket *_udpSocket;
     QTcpSocket *_tcpSocket;
     bool _netWorkState = false;
@@ -44,6 +45,7 @@ private:
     quint32 _blockSize = 0;
     QString _jsonDocument;
     QByteArray _networkDataBuffer;
+
 
 private slots:
     void startConnectNetWork();
@@ -56,6 +58,7 @@ signals:
     void connectedNetwork();
     void disconnectNetwork();
     void getNetworkData(QByteArray jsonByteArray);
+
 };
 
 #endif // T3_FACE_NETWORK_H
