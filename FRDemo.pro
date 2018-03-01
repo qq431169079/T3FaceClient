@@ -21,7 +21,8 @@ HEADERS       = \
     msp_errors.h \
     msp_types.h \
     qtts.h \
-    t3_face_database.h
+    t3_face_database.h \
+    t3_face_imageformat.h
 
 SOURCES       = \
                 main.cpp \
@@ -34,7 +35,8 @@ SOURCES       = \
     serialport.cpp \
     t3_face_network.cpp \
     t3_face_tts.cpp \
-    t3_face_database.cpp
+    t3_face_database.cpp \
+    t3_face_imageformat.cpp
 
 QT           += widgets  multimedia sql network serialport
 win32:LIBS       +=  -L../T3FaceClient -llibarcsoft_fsdk_face_tracking -llibarcsoft_fsdk_face_recognition
@@ -50,4 +52,6 @@ RC_FILE += t3_face_logo.rc
 
 QMAKE_CXXFLAGS += -std=c++0x
 
+unix: CONFIG += link_pkgconfig
+unix: PKGCONFIG += opencv
 

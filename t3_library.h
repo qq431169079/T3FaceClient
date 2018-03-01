@@ -29,8 +29,8 @@
 
 #define kVideoPoint_X 20
 #define kVideoPoint_Y 170
-#define kVideoWidth 480
-#define kVideoHeight 640
+#define kVideoWidth 640
+#define kVideoHeight 480
 #define kBackgroundImage ":/bg/bg/bg.jpg"
 
 #define kInterval 30    //识别记录及语音输出的时间间隔。

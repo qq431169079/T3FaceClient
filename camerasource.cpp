@@ -51,7 +51,27 @@ CameraSource::CameraSource(int width, int height, int format){
 	mWidth = width;
 	mHeight = height;
 	mFormat = format;
-	bOpen = false;
+    bOpen = false;
+    _imageFormat = new T3_Face_ImageFormat();
+    _imageFormat->initFormat(AV_PIX_FMT_YUYV422,
+                             AV_PIX_FMT_YUV420P,
+                             kVideoWidth,
+                             kVideoHeight);
+    _imageFormatYuv2yuyv = new T3_Face_ImageFormat();
+    _imageFormatYuv2yuyv->initFormat(AV_PIX_FMT_YUV420P,
+                                     AV_PIX_FMT_YUYV422,
+                                     kVideoWidth,
+                                     kVideoHeight);
+
+
+
+
+    //导入相机内参和畸变系数矩阵
+
+    file_storage = new FileStorage("out_camera_data.xml", FileStorage::READ);
+    (*file_storage)["camera_matrix"] >> camera_matrix;
+    (*file_storage)["distortion_coefficients"] >> distortion_coefficients;
+    file_storage->release();
 }
 
 CameraSource::~CameraSource(){
@@ -125,7 +145,23 @@ void CameraSource::ReadFrame(unsigned char *pBuffer,int bufsize){
         return;
     }
 
-    memcpy(pBuffer, mV4l2_bufstart[v4l2buf.index], v4l2buf.bytesused);
+    _yuv420pData = _imageFormat->chengeImageFormat((uint8_t *)mV4l2_bufstart[v4l2buf.index]);
+    Mat yuvImg;
+    yuvImg.create(kVideoHeight*3/2,kVideoWidth,CV_8UC1);
+    memcpy(yuvImg.data,_yuv420pData,kVideoHeight*3/2*kVideoWidth);
+
+    Mat rgbImg;
+    cvtColor(yuvImg,rgbImg,CV_YUV2BGR_I420);
+
+    undistort(rgbImg, undistort_frame, camera_matrix, distortion_coefficients);
+    waitKey(1);
+
+    cvtColor(undistort_frame,yuvImg,CV_BGR2YUV_I420);
+    memcpy(_yuv420pData,yuvImg.data,kVideoHeight*3/2*kVideoWidth);
+    _yuyv422Data = _imageFormatYuv2yuyv->chengeImageFormat(_yuv420pData);
+
+
+    memcpy(pBuffer, _yuyv422Data,kVideoHeight*2*kVideoWidth );
 
 
 	int index = v4l2buf.index;
