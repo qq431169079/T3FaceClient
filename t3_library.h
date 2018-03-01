@@ -17,8 +17,8 @@
 #define kServerURL "localhost"
 //#define kServerURL "192.168.50.106"
 #define kServerPort 6666
-//#define kURL "192.168.0.192"
-#define kURL "192.168.0.210"
+#define kURL "192.168.0.192"
+//#define kURL "192.168.0.210"
 
 //FaceEngine
 
