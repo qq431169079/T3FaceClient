@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 
+
 #define T3LOG   qDebug() << "["  << __FILE__ << ":" << __LINE__ << ":"<< __TIME__ "]"
 #endif // T3_LOG_H
 

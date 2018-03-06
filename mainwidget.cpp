@@ -65,7 +65,7 @@ void MainWidget::openCamera()
 
         bFrameMirrored = true;
         mCameraSource = new CameraSource(640, 480, ASVL_PAF_YUYV);
-        mCameraSource->Open(0,"");
+        mCameraSource->Open(1,"");
     }
 }
 
